@@ -11,5 +11,9 @@ jobs:
       run: tar -xvf verible-v0.0-3933-g0e3fe53a-linux-static-x86_64.tar.gz -C /tmp/
     - name: Move Verible
       run: mv /tmp/verible-v0.0-3933-g0e3fe53a/bin/* /usr/local/bin/
+    - name: Run format
+      run: verible-verilog-format --inplace *.sv
+    - name: Check diff
+      run: git diff --exit-code
     - name: Run Verible
       run: verible-verilog-lint *.sv
