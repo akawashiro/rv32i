@@ -58,7 +58,7 @@ module test_instruction_memory;
   assign initial_instructions[2] = 32'b000000000001_01100_000_01101_0010011;
   genvar i;
   generate
-    for (i = 3; i < 32; i = i + 1) begin : fill_rom
+    for (i = 3; i < 32; i = i + 1) begin : g_fill_rom
       assign initial_instructions[i] = 32'b0;
     end
   endgenerate
@@ -93,7 +93,7 @@ module test_memory_reset;
 
   generate
     genvar i;
-    for (i = 0; i < 32; i = i + 1) begin : fill_initial_values
+    for (i = 0; i < 32; i = i + 1) begin : g_fill_initial_values
       assign initial_values[i] = 3000 + i;
     end
   endgenerate
@@ -148,7 +148,7 @@ module test_register_file;
 
   generate
     genvar i;
-    for (i = 0; i < 32; i = i + 1) begin : fill_initial_values
+    for (i = 0; i < 32; i = i + 1) begin : g_fill_initial_values
       assign initial_values[i] = 3000 + i;
     end
   endgenerate
@@ -400,14 +400,14 @@ module test_cpu;
   // Fill the rest of the ROM with 0s
   genvar i;
   generate
-    for (i = 3; i < 32; i = i + 1) begin : fill_rom
+    for (i = 3; i < 32; i = i + 1) begin : g_fill_rom
       assign initial_instructions[i] = 32'b0;
     end
   endgenerate
 
   // Fill the register file with initial values
   generate
-    for (i = 0; i < 32; i = i + 1) begin : fill_initial_values
+    for (i = 0; i < 32; i = i + 1) begin : g_fill_initial_values
       assign initial_register_values[i] = 3000 + i;
     end
   endgenerate
