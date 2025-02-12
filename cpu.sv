@@ -23,13 +23,13 @@ endmodule
 module instruction_memory (
     input  logic [31:0] pc,
     output logic [31:0] instruction,
-    input  logic [31:0] initial_instructions[0:31]
+    input  logic [31:0] initial_instructions[32]
 );
-  logic [31:0] rom[0:31];
+  logic [31:0] rom[32];
 
   genvar i;
   generate
-    for (i = 0; i < 32; i = i + 1) begin : fill_rom
+    for (i = 0; i < 32; i = i + 1) begin : g_fill_rom
       assign rom[i] = initial_instructions[i];
     end
   endgenerate
@@ -44,10 +44,10 @@ module memory (
     input logic clk,
     input logic reset,
     output logic [31:0] data_out,
-    input logic [31:0] initial_values[0:31],
-    output logic [31:0] memory_check[0:31]
+    input logic [31:0] initial_values[32],
+    output logic [31:0] memory_check[32]
 );
-  logic [31:0] mem[0:31];
+  logic [31:0] mem[32];
   logic [31:0] effective_address;
   assign effective_address = {2'b00, address[31:2]};
 
@@ -80,10 +80,10 @@ module register_file (
     input logic write_enable,
     output logic [31:0] data_out1,
     output logic [31:0] data_out2,
-    input logic [31:0] initial_values[0:31],
-    output logic [31:0] register_check[0:31]
+    input logic [31:0] initial_values[32],
+    output logic [31:0] register_check[32]
 );
-  logic [31:0] registers[0:31];
+  logic [31:0] registers[32];
 
   always_comb begin
     data_out1 = registers[rs1];
@@ -185,7 +185,7 @@ typedef enum logic [6:0] {
   JAL = 7'b1101111,
   JALR = 7'b1100111,
   BEQ = 7'b1100011
-} OPCODE_TYPE;
+} opcode_t;
 
 module control_unit (
     input logic [6:0] opcode,
@@ -339,7 +339,7 @@ typedef enum logic [1:0] {
   REGISTER_DATA_IN_MUX_ALU_RESULT,
   REGISTER_DATA_IN_MUX_MEMORY_DATA,
   REGISTER_DATA_IN_MUX_PC_PLUS_4
-} REGISTER_DATA_IN_MUX_SEL;
+} register_data_in_mux_sel_t;
 
 module register_data_in_mux (
     input  logic [31:0] alu_result,
@@ -383,12 +383,12 @@ module beq_or_bne_addr (
   assign beq_or_bne_addr = pc + beq_or_bne_imm;
 endmodule
 
-enum logic [2:0] {
+typedef enum logic [2:0] {
   PC_IN_MUX_PC_PLUS_4,
   PC_IN_MUX_JAL_ADDR,
   PC_IN_MUX_ALU_RESULT,
   PC_IN_MUX_BEQ_OR_BNE_ADDR
-} PC_IN_MUX_SEL;
+} pc_in_mux_sel_t;
 
 module pc_in_mux (
     input  logic [31:0] pc_plus_4,
@@ -412,9 +412,9 @@ endmodule
 module cpu (
     input logic clk,
     input logic reset,
-    input logic [31:0] initial_instructions[0:31],
-    input logic [31:0] initial_register_values[0:31],
-    input logic [31:0] initial_memory_values[0:31],
+    input logic [31:0] initial_instructions[32],
+    input logic [31:0] initial_register_values[32],
+    input logic [31:0] initial_memory_values[32],
     output logic [31:0] pc_out_check,
     output logic [31:0] instruction_check,
     output logic [3:0] alu_op_check,
@@ -426,8 +426,8 @@ module cpu (
     output logic [0:0] reg_write_check,
     output logic [31:0] imm_ext_check,
     output logic [0:0] use_imm_check,
-    output wire [31:0] register_check[0:31],
-    output wire [31:0] memory_check[0:31],
+    output wire [31:0] register_check[32],
+    output wire [31:0] memory_check[32],
     output logic [2:0] sign_extend_type_check
 );
   logic [31:0] pc_in;
