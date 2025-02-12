@@ -208,17 +208,19 @@ module control_unit (
         use_imm = 0;
         sign_extend_type = ADDI_SIGN_EXTEND;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_PC_PLUS_4;
-        case (alu_eq)
+        unique case (alu_eq)
           1'b0: begin
             case (funct3)
               3'b000: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;  // BEQ
               3'b001: pc_in_mux_sel = PC_IN_MUX_BEQ_OR_BNE_ADDR;  // BNE
+              default: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
             endcase
           end
           1'b1: begin
             case (funct3)
               3'b000: pc_in_mux_sel = PC_IN_MUX_BEQ_OR_BNE_ADDR;  // BEQ
               3'b001: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;  // BNE
+              default: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
             endcase
           end
         endcase
@@ -240,11 +242,12 @@ module control_unit (
         pc_in_mux_sel = PC_IN_MUX_ALU_RESULT;
       end
       ALU_WITH_TWO_REGISTERS: begin
-        case (funct3)
+        unique case (funct3)
           3'b000: begin
             case (funct7)
               7'b0000000: alu_op = ADD;
               7'b0100000: alu_op = SUB;
+              default: alu_op = ADD;
             endcase
           end
           3'b001:  alu_op = SLL;
@@ -279,6 +282,7 @@ module control_unit (
             case (funct7)
               7'b0000000: alu_op = SRL;
               7'b0100000: alu_op = SRA;
+              default: alu_op = SRL;
             endcase
             sign_extend_type = SLLI_SIGN_EXTEND;
           end
@@ -288,6 +292,10 @@ module control_unit (
           end
           3'b111: begin
             alu_op = AND;
+            sign_extend_type = ADDI_SIGN_EXTEND;
+          end
+          default: begin
+            alu_op = ADD;
             sign_extend_type = ADDI_SIGN_EXTEND;
           end
         endcase
@@ -319,6 +327,14 @@ module control_unit (
         sign_extend_type = SW_SIGN_EXTEND;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_MEMORY_DATA;
         memory_write = 1;
+        pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+      end
+      default: begin
+        alu_op = ADD;
+        reg_write = 0;
+        use_imm = 0;
+        sign_extend_type = ADDI_SIGN_EXTEND;
+        register_data_in_mux_sel = REGISTER_DATA_IN_MUX_PC_PLUS_4;
         pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
       end
     endcase
@@ -399,7 +415,7 @@ module pc_in_mux (
     output logic [31:0] pc_in
 );
   always_comb begin
-    case (pc_in_mux_sel)
+    unique case (pc_in_mux_sel)
       PC_IN_MUX_PC_PLUS_4: pc_in = pc_plus_4;
       PC_IN_MUX_JAL_ADDR: pc_in = jal_addr;
       PC_IN_MUX_ALU_RESULT: pc_in = alu_result;
