@@ -223,6 +223,7 @@ module control_unit (
               default: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
             endcase
           end
+          default: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
         endcase
       end
       JAL: begin
