@@ -1,5 +1,5 @@
-name: Lint
-on: [push, pull_request]
+name: Check using iverilog
+on: [pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
