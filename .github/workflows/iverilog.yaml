@@ -6,6 +6,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install requirements
-      run: apt-get install iverilog
+      run: sudo apt-get install iverilog
     - name: Run iVerilog
       run: ./run.sh
