@@ -211,15 +211,15 @@ module control_unit (
         unique case (alu_eq)
           1'b0: begin
             case (funct3)
-              3'b000: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;  // BEQ
-              3'b001: pc_in_mux_sel = PC_IN_MUX_BEQ_OR_BNE_ADDR;  // BNE
+              3'b000:  pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;  // BEQ
+              3'b001:  pc_in_mux_sel = PC_IN_MUX_BEQ_OR_BNE_ADDR;  // BNE
               default: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
             endcase
           end
           1'b1: begin
             case (funct3)
-              3'b000: pc_in_mux_sel = PC_IN_MUX_BEQ_OR_BNE_ADDR;  // BEQ
-              3'b001: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;  // BNE
+              3'b000:  pc_in_mux_sel = PC_IN_MUX_BEQ_OR_BNE_ADDR;  // BEQ
+              3'b001:  pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;  // BNE
               default: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
             endcase
           end
