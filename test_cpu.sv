@@ -89,7 +89,7 @@ module test_memory_reset;
   logic clk;
   logic reset;
   logic [31:0] initial_values[31:0];
-  wire [31:0] memory_check[0:31];
+  wire [31:0] memory_check[32];
 
   generate
     genvar i;
@@ -144,7 +144,7 @@ module test_register_file;
   logic [31:0] initial_values[31:0];
   // You must use wire instead of logic for the register_check because of
   // https://github.com/steveicarus/iverilog/issues/1001.
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   generate
     genvar i;
@@ -309,7 +309,7 @@ module test_cpu_add;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = add_x7_x6_x5;
   assign initial_register_values[5] = 5;
@@ -344,7 +344,7 @@ module test_cpu_sub;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = sub_x10_x9_x8;
   assign initial_register_values[8] = 8;
@@ -390,7 +390,7 @@ module test_cpu;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   // Fill the ROM with RV32I instructions
   assign initial_instructions[0] = add_x7_x6_x5;
@@ -506,7 +506,7 @@ module test_cpu_slt_0;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = slt_x8_x7_x6;
   assign initial_register_values[6] = 6;
@@ -541,7 +541,7 @@ module test_cpu_slt_1;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = slt_x8_x6_x7;
   assign initial_register_values[6] = 6;
@@ -577,7 +577,7 @@ module test_cpu_xor;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = xor_x8_x7_x6;
   assign initial_register_values[6] = 6;
@@ -613,7 +613,7 @@ module test_cpu_or;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = or_x8_x7_x6;
   assign initial_register_values[6] = 8;
@@ -649,7 +649,7 @@ module test_cpu_and;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = and_x8_x7_x6;
   assign initial_register_values[6] = 8;
@@ -685,7 +685,7 @@ module test_cpu_slli;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = slli_x8_x6_4;
   assign initial_register_values[6] = 8;
@@ -720,7 +720,7 @@ module test_cpu_srli;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = srli_x8_x6_4;
   assign initial_register_values[6] = 128;
@@ -755,7 +755,7 @@ module test_cpu_srai;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
   logic [3:0] alu_op_check;
   logic [31:0] alu_result_check;
   logic use_imm_check;
@@ -798,7 +798,7 @@ module test_cpu_xori;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = xori_x8_x7_1;
   assign initial_register_values[7] = 1;
@@ -833,7 +833,7 @@ module test_cpu_ori;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = ori_x8_x7_1;
   assign initial_register_values[7] = 1;
@@ -868,7 +868,7 @@ module test_cpu_andi;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = andi_x8_x7_1;
   assign initial_register_values[7] = 1;
@@ -903,7 +903,7 @@ module test_cpu_lui;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
 
   assign initial_instructions[0] = lui_x8_1234;
 
@@ -940,7 +940,7 @@ module test_cpu_lw;
   logic [31:0] alu_result_check;
   logic [3:0] alu_op_check;
   logic [31:0] imm_ext_check;
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
   logic [2:0] sign_extend_type_check;
 
   assign initial_instructions[0] = lw_x8_4_x6;
@@ -990,8 +990,8 @@ module test_cpu_sw;
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
   logic [31:0] imm_ext_check;
-  wire [31:0] register_check[0:31];
-  wire [31:0] memory_check[0:31];
+  wire [31:0] register_check[32];
+  wire [31:0] memory_check[32];
 
   assign initial_instructions[0] = sw_x8_4_x6;
   assign initial_register_values[6] = 4;
@@ -1050,7 +1050,7 @@ module test_cpu_jal;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
   logic [31:0] pc_out_check;
 
   assign initial_instructions[0] = jal_x8_8;
@@ -1088,7 +1088,7 @@ module test_cpu_jalr;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
   logic [31:0] pc_out_check;
 
   assign initial_instructions[0] = jalr_x8_x6_8;
@@ -1140,7 +1140,7 @@ module test_cpu_bne_taken;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
   logic [31:0] pc_out_check;
 
   assign initial_instructions[0] = bne_x8_x6_8;
@@ -1177,7 +1177,7 @@ module test_cpu_bne_not_taken;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
   logic [31:0] pc_out_check;
 
   assign initial_instructions[0] = bne_x8_x6_8;
@@ -1215,7 +1215,7 @@ module test_cpu_beq_taken;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
   logic [31:0] pc_out_check;
 
   assign initial_instructions[0] = beq_x8_x6_8;
@@ -1252,7 +1252,7 @@ module test_cpu_beq_not_taken;
   logic [31:0] initial_instructions[31:0];
   logic [31:0] initial_register_values[31:0];
   logic [31:0] initial_memory_values[31:0];
-  wire [31:0] register_check[0:31];
+  wire [31:0] register_check[32];
   logic [31:0] pc_out_check;
 
   assign initial_instructions[0] = beq_x8_x6_8;
