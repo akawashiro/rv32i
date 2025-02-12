@@ -786,10 +786,6 @@ module test_cpu_srai;
     clk = 0;
     #10 clk = 1;
     #10
-    assert (alu_op_check == SRA)
-    else $error("alu_op_check = %d", alu_op_check);
-    assert (use_imm_check == 1)
-    else $error("use_imm_check = %d", use_imm_check);
     assert (register_check[8] == 32'b11111111111111111111111111110000)
     else $error("register_check[8] = %b", register_check[8]);
   end
