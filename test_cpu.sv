@@ -192,6 +192,13 @@ module test_register_file;
     else $error("register_check[2] = %h", register_check[2]);
     assert (register_check[3] == 32'hdeadbeef)
     else $error("register_check[3] = %h", register_check[3]);
+    #10
+    rs1 = 0;
+    clk = 0;
+    #10 clk = 1;
+    #10
+    assert (data_out1 == 0)
+    else $error("data_out1 = %h", data_out1);
   end
 endmodule
 
