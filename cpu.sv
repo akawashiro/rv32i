@@ -86,6 +86,7 @@ module register_file (
   logic [31:0] registers[32];
 
   always_comb begin
+    registers[0] = 0;
     data_out1 = registers[rs1];
     data_out2 = registers[rs2];
     for (int j = 0; j < 32; j = j + 1) begin
@@ -95,11 +96,11 @@ module register_file (
 
   always_ff @(posedge clk)
     if (reset) begin
-      for (int i = 0; i < 32; i = i + 1) begin
+      for (int i = 1; i < 32; i = i + 1) begin
         registers[i] <= initial_values[i];
       end
     end else begin
-      if (write_enable) begin
+      if (write_enable && rd[4:0] != 0) begin
         registers[rd[4:0]] <= data_in;
       end
     end
