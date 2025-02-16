@@ -40,7 +40,7 @@ module fib;
   logic [31:0] initial_register_values[32];
   logic [31:0] initial_memory_values[32];
   wire [31:0] register_check[32];
-  logic [31:0] pc_out_check;
+  logic [31:0] pc_check;
 
   assign initial_instructions[0]  = 32'h00000513;
   assign initial_instructions[1]  = 32'h00100593;
@@ -60,7 +60,7 @@ module fib;
       .initial_instructions(initial_instructions),
       .initial_register_values(initial_register_values),
       .initial_memory_values(initial_memory_values),
-      .pc_out_check(pc_out_check),
+      .pc_check(pc_check),
       .register_check(register_check)
   );
 
