@@ -451,7 +451,6 @@ module cpu (
 );
   logic [31:0] pc_in;
   logic [31:0] register_data_in;
-  logic [31:0] alu_result;
   logic [31:0] imm_ext;
   logic [ 0:0] use_imm;
   logic [ 2:0] sign_extend_type;
@@ -479,7 +478,7 @@ module cpu (
   pc_in_mux pc_in_mux_0 (
       .pc_plus_4(pc_plus_4_0.pc_out),
       .jal_addr(jal_addr_0.jal_addr),
-      .alu_result(alu_result),
+      .alu_result(alu_0.result),
       .beq_or_bne_addr(beq_or_bne_addr_0.beq_or_bne_addr),
       .pc_in_mux_sel(control_unit_0.pc_in_mux_sel),
       .pc_in(pc_in)
@@ -539,15 +538,14 @@ module cpu (
   alu alu_0 (
       .a(register_file_0.data_out1),
       .b(b_input),
-      .alu_op(control_unit_0.alu_op),
-      .result(alu_result)
+      .alu_op(control_unit_0.alu_op)
   );
-  assign alu_result_check = alu_result;
+  assign alu_result_check = alu_0.result;
 
   logic [31:0] memory_data;
 
   memory memory_0 (
-      .address(alu_result),
+      .address(alu_0.result),
       .data_in(register_file_0.data_out2),
       .write_enable(control_unit_0.memory_write),
       .clk(clk),
@@ -558,7 +556,7 @@ module cpu (
   );
 
   register_data_in_mux register_data_in_mux_0 (
-      .alu_result(alu_result),
+      .alu_result(alu_0.result),
       .memory_data(memory_data),
       .pc_plus_4(pc_plus_4_0.pc_out),
       .register_data_in_mux_sel(control_unit_0.register_data_in_mux_sel),
