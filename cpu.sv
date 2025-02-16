@@ -450,8 +450,6 @@ module cpu (
     output logic [2:0] sign_extend_type_check
 );
   logic [31:0] pc_in;
-  logic [31:0] pc_out;
-  logic [31:0] instruction;
   logic [ 3:0] alu_op;
   logic [31:0] register_data_out1;
   logic [31:0] register_data_out2;
@@ -466,21 +464,20 @@ module cpu (
   pc pc_0 (
       .clk(clk),
       .reset(reset),
-      .pc_in(pc_in),
-      .pc_out(pc_out)
+      .pc_in(pc_in)
   );
-  assign pc_out_check = pc_out;
+  assign pc_out_check = pc_0.pc_out;
 
-  pc_plus_4 pc_plus_4_0 (.pc_in(pc_out));
+  pc_plus_4 pc_plus_4_0 (.pc_in(pc_0.pc_out));
 
   jal_addr jal_addr_0 (
-      .pc(pc_out),
-      .instruction(instruction)
+      .pc(pc_0.pc_out),
+      .instruction(instruction_memory_0.instruction)
   );
 
   beq_or_bne_addr beq_or_bne_addr_0 (
-      .pc(pc_out),
-      .instruction(instruction),
+      .pc(pc_0.pc_out),
+      .instruction(instruction_memory_0.instruction),
       .imm_ext(imm_ext)
   );
 
@@ -494,16 +491,15 @@ module cpu (
   );
 
   instruction_memory instruction_memory_0 (
-      .pc(pc_out),
-      .instruction(instruction),
+      .pc(pc_0.pc_out),
       .initial_instructions(initial_instructions)
   );
-  assign instruction_check = instruction;
+  assign instruction_check = instruction_memory_0.instruction;
 
   control_unit control_unit_0 (
-      .opcode(instruction[6:0]),
-      .funct3(instruction[14:12]),
-      .funct7(instruction[31:25]),
+      .opcode(instruction_memory_0.instruction[6:0]),
+      .funct3(instruction_memory_0.instruction[14:12]),
+      .funct7(instruction_memory_0.instruction[31:25]),
       .alu_op(alu_op),
       .alu_eq(alu_0.alu_eq),
       .reg_write(reg_write),
@@ -517,16 +513,16 @@ module cpu (
   assign sign_extend_type_check = sign_extend_type;
 
   sign_extend sign_extend_0 (
-      .instruction(instruction),
+      .instruction(instruction_memory_0.instruction),
       .sign_extend_type(sign_extend_type),
       .imm_ext(imm_ext)
   );
   assign imm_ext_check = imm_ext;
 
   register_file register_file_0 (
-      .rs1(instruction[19:15]),
-      .rs2(instruction[24:20]),
-      .rd(instruction[11:7]),
+      .rs1(instruction_memory_0.instruction[19:15]),
+      .rs2(instruction_memory_0.instruction[24:20]),
+      .rd(instruction_memory_0.instruction[11:7]),
       .data_in(register_data_in),
       .clk(clk),
       .reset(reset),
