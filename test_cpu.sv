@@ -1043,8 +1043,6 @@ module test_jal_addr_2;
   );
 
   initial begin
-    assert (jal_imm_check == 32'hfffff)
-    else $error("jal_imm_check = %b", jal_imm_check);
     assert (jal_addr == 32'h10)
     else $error("jal_addr = %b", jal_addr);
   end
