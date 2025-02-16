@@ -6,7 +6,7 @@ module test_pc;
   logic [31:0] pc_next;
   logic [31:0] pc;
 
-  pc pc_inst (
+  pc pc_0 (
       .clk(clk),
       .reset(reset),
       .pc_next(pc_next),
@@ -30,15 +30,15 @@ module test_pc;
 endmodule
 
 module test_pc_plus_4;
-  logic [31:0] pc_in;
+  logic [31:0] pc;
 
-  pc_plus_4 pc_plus_4_0 (.pc_in(pc_in));
+  pc_plus_4 pc_plus_4_0 (.pc(pc));
 
   initial begin
-    pc_in = 4;
+    pc = 4;
     assert (pc_plus_4_0.pc_next == 8)
     else $error("pc = %d", pc_plus_4_0.pc_next);
-    pc_in = 8;
+    pc = 8;
     assert (pc_plus_4_0.pc_next == 12)
     else $error("pc = %d", pc_plus_4_0.pc_next);
   end

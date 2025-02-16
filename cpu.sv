@@ -14,10 +14,10 @@ module pc (
 endmodule
 
 module pc_plus_4 (
-    input  logic [31:0] pc_in,
+    input  logic [31:0] pc,
     output logic [31:0] pc_next
 );
-  assign pc_next = pc_in + 4;
+  assign pc_next = pc + 4;
 endmodule
 
 module instruction_memory (
@@ -458,7 +458,7 @@ module cpu (
   );
   assign pc_check = pc_0.pc;
 
-  pc_plus_4 pc_plus_4_0 (.pc_in(pc_0.pc));
+  pc_plus_4 pc_plus_4_0 (.pc(pc_0.pc));
 
   jal_addr jal_addr_0 (
       .pc(pc_0.pc),
