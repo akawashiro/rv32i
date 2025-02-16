@@ -449,13 +449,12 @@ module cpu (
     output wire [31:0] memory_check[32],
     output logic [2:0] sign_extend_type_check
 );
-  logic [31:0] pc_next;
   logic [31:0] register_data_in;
 
   pc pc_0 (
       .clk(clk),
       .reset(reset),
-      .pc_next(pc_next)
+      .pc_next(pc_in_mux_0.pc_in)
   );
   assign pc_out_check = pc_0.pc_out;
 
@@ -477,8 +476,7 @@ module cpu (
       .jal_addr(jal_addr_0.jal_addr),
       .alu_result(alu_0.result),
       .beq_or_bne_addr(beq_or_bne_addr_0.beq_or_bne_addr),
-      .pc_in_mux_sel(control_unit_0.pc_in_mux_sel),
-      .pc_in(pc_next)
+      .pc_in_mux_sel(control_unit_0.pc_in_mux_sel)
   );
 
   instruction_memory instruction_memory_0 (
