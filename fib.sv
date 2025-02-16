@@ -2,31 +2,31 @@
 
 // $ cat fib.asm
 // .global main
-// 
+//
 // .main:
 //     # 初期値の設定
 //     li a0, 0   # a0 = F(n-2)
 //     li a1, 1   # a1 = F(n-1)
 //     li a2, 10  # a2 = n (求めるフィボナッチ数の番号)
 //     li a4, 1
-// 
+//
 // .loop:
 //     # n が 2 より小さい場合はループを終了
 //     ble a2, a4, .end
-// 
+//
 //     # F(n) を計算
 //     add a3, a0, a1
-// 
+//
 //     # F(n-2) と F(n-1) を更新
 //     mv a0, a1
 //     mv a1, a3
-// 
+//
 //     # n をデクリメント
 //     addi a2, a2, -1
-// 
+//
 //     # ループに戻る
 //     j .loop
-// 
+//
 // .end:
 //     # 結果 (F(10)) を a1 に格納
 //     mv a1, a3
@@ -208,6 +208,7 @@ module fib;
     #10 clk = 1;
     #10 clk = 0;
     #10 clk = 1;
+    // The 10th item in the Fibonacci sequence is 55.
     assert (register_check[11] == 55)
     else $error("register_check[11] = %d", register_check[11]);
   end
