@@ -1,23 +1,23 @@
 module pc (
     input logic clk,
     input logic reset,
-    input logic [31:0] pc_in,
+    input logic [31:0] pc_next,
     output logic [31:0] pc_out
 );
   always_ff @(posedge clk) begin
     if (reset) begin
       pc_out <= 0;
     end else begin
-      pc_out <= pc_in;
+      pc_out <= pc_next;
     end
   end
 endmodule
 
 module pc_plus_4 (
     input  logic [31:0] pc_in,
-    output logic [31:0] pc_out
+    output logic [31:0] pc_next
 );
-  assign pc_out = pc_in + 4;
+  assign pc_next = pc_in + 4;
 endmodule
 
 module instruction_memory (
@@ -449,13 +449,13 @@ module cpu (
     output wire [31:0] memory_check[32],
     output logic [2:0] sign_extend_type_check
 );
-  logic [31:0] pc_in;
+  logic [31:0] pc_next;
   logic [31:0] register_data_in;
 
   pc pc_0 (
       .clk(clk),
       .reset(reset),
-      .pc_in(pc_in)
+      .pc_next(pc_next)
   );
   assign pc_out_check = pc_0.pc_out;
 
@@ -473,12 +473,12 @@ module cpu (
   );
 
   pc_in_mux pc_in_mux_0 (
-      .pc_plus_4(pc_plus_4_0.pc_out),
+      .pc_plus_4(pc_plus_4_0.pc_next),
       .jal_addr(jal_addr_0.jal_addr),
       .alu_result(alu_0.result),
       .beq_or_bne_addr(beq_or_bne_addr_0.beq_or_bne_addr),
       .pc_in_mux_sel(control_unit_0.pc_in_mux_sel),
-      .pc_in(pc_in)
+      .pc_in(pc_next)
   );
 
   instruction_memory instruction_memory_0 (
@@ -491,7 +491,6 @@ module cpu (
       .opcode(instruction_memory_0.instruction[6:0]),
       .funct3(instruction_memory_0.instruction[14:12]),
       .funct7(instruction_memory_0.instruction[31:25]),
-      .alu_op(alu_op),
       .alu_eq(alu_0.alu_eq)
   );
   assign alu_op_check = control_unit_0.alu_op;
@@ -552,7 +551,7 @@ module cpu (
   register_data_in_mux register_data_in_mux_0 (
       .alu_result(alu_0.result),
       .memory_data(memory_data),
-      .pc_plus_4(pc_plus_4_0.pc_out),
+      .pc_plus_4(pc_plus_4_0.pc_next),
       .register_data_in_mux_sel(control_unit_0.register_data_in_mux_sel),
       .register_data_in(register_data_in)
   );
