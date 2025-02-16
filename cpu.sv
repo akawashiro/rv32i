@@ -506,7 +506,7 @@ module cpu (
       .rs1(instruction_memory_0.instruction[19:15]),
       .rs2(instruction_memory_0.instruction[24:20]),
       .rd(instruction_memory_0.instruction[11:7]),
-      .data_in(register_data_in),
+      .data_in(register_data_in_mux_0.register_data_in),
       .clk(clk),
       .reset(reset),
       .write_enable(control_unit_0.reg_write),
@@ -515,7 +515,6 @@ module cpu (
   );
   assign register_data_out1_check = register_file_0.data_out1;
   assign register_data_out2_check = register_file_0.data_out2;
-  assign register_data_in_check   = register_data_in;
 
   logic [31:0] b_input;
   b_input_mux b_input_mux_0 (
@@ -550,7 +549,7 @@ module cpu (
       .alu_result(alu_0.result),
       .memory_data(memory_data),
       .pc_plus_4(pc_plus_4_0.pc_next),
-      .register_data_in_mux_sel(control_unit_0.register_data_in_mux_sel),
-      .register_data_in(register_data_in)
+      .register_data_in_mux_sel(control_unit_0.register_data_in_mux_sel)
   );
+  assign register_data_in_check = register_data_in_mux_0.register_data_in;
 endmodule
