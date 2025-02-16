@@ -1030,6 +1030,24 @@ module test_cpu_sw;
   end
 endmodule
 
+module test_jal_addr_2;
+  logic [31:0] jal_addr;
+  logic [31:0] jal_imm_check;
+  logic [31:0] inst = 32'b11111110110111111111_00000_1101111;
+
+  jal_addr jal_addr_0 (
+      .instruction(inst),
+      .pc(32'h24),
+      .jal_imm_check(jal_imm_check),
+      .jal_addr(jal_addr)
+  );
+
+  initial begin
+    assert (jal_addr == 32'h10)
+    else $error("jal_addr = %b", jal_addr);
+  end
+endmodule
+
 logic [31:0] jal_x8_8 = 32'h0080046f;
 module test_jal_addr;
   logic [31:0] jal_addr;
