@@ -4,13 +4,13 @@ module test_pc;
   logic clk;
   logic reset;
   logic [31:0] pc_next;
-  logic [31:0] pc_out;
+  logic [31:0] pc;
 
   pc pc_inst (
       .clk(clk),
       .reset(reset),
       .pc_next(pc_next),
-      .pc_out(pc_out)
+      .pc(pc)
   );
 
   initial begin
@@ -18,14 +18,14 @@ module test_pc;
     pc_next = 4;
     clk = 1;
     #10
-    assert (pc_out == 4)
-    else $error("pc_out = %d", pc_out);
+    assert (pc == 4)
+    else $error("pc = %d", pc);
     clk = 0;
     pc_next = 8;
     clk = 1;
     #10
-    assert (pc_out == 8)
-    else $error("pc_out = %d", pc_out);
+    assert (pc == 8)
+    else $error("pc = %d", pc);
   end
 endmodule
 
@@ -37,10 +37,10 @@ module test_pc_plus_4;
   initial begin
     pc_in = 4;
     assert (pc_plus_4_0.pc_next == 8)
-    else $error("pc_out = %d", pc_plus_4_0.pc_next);
+    else $error("pc = %d", pc_plus_4_0.pc_next);
     pc_in = 8;
     assert (pc_plus_4_0.pc_next == 12)
-    else $error("pc_out = %d", pc_plus_4_0.pc_next);
+    else $error("pc = %d", pc_plus_4_0.pc_next);
   end
 endmodule
 
@@ -378,7 +378,7 @@ endmodule
 module test_cpu;
   logic clk;
   logic reset;
-  logic [31:0] pc_out_check;
+  logic [31:0] pc_check;
   logic [31:0] instruction_check;
   logic [3:0] alu_op_check;
   logic [31:0] register_data_out1_check;
@@ -417,7 +417,7 @@ module test_cpu;
   cpu cpu_0 (
       .clk(clk),
       .reset(reset),
-      .pc_out_check(pc_out_check),
+      .pc_check(pc_check),
       .instruction_check(instruction_check),
       .alu_op_check(alu_op_check),
       .register_data_out1_check(register_data_out1_check),
@@ -440,8 +440,8 @@ module test_cpu;
     #10 clk = 1;
     reset = 1;
     #10 reset = 0;
-    assert (pc_out_check == 0)
-    else $error("pc_out_check = %d", pc_out_check);
+    assert (pc_check == 0)
+    else $error("pc_check = %d", pc_check);
     assert (instruction_check == 32'h005303b3)
     else $error("instruction_check = %h", instruction_check);
     assert (alu_op_check == ADD)
@@ -461,8 +461,8 @@ module test_cpu;
     #10
     assert (register_check[7] == 6011)
     else $error("register_check[7] = %d", register_check[7]);
-    assert (pc_out_check == 4)
-    else $error("pc_out_check = %d", pc_out_check);
+    assert (pc_check == 4)
+    else $error("pc_check = %d", pc_check);
     assert (instruction_check == 32'h40848533)
     else $error("instruction_check = %h", instruction_check);
     assert (alu_op_check == SUB)
@@ -478,8 +478,8 @@ module test_cpu;
     #10 clk = 0;
     #10 clk = 1;
     #10
-    assert (pc_out_check == 8)
-    else $error("pc_out_check = %d", pc_out_check);
+    assert (pc_check == 8)
+    else $error("pc_check = %d", pc_check);
     assert (instruction_check == 32'b000000000001_01100_000_01101_0010011)
     else $error("instruction_check = %h", instruction_check);
     assert (alu_op_check == ADD)
@@ -1071,7 +1071,7 @@ module test_cpu_jal;
   logic [31:0] initial_register_values[32];
   logic [31:0] initial_memory_values[32];
   wire [31:0] register_check[32];
-  logic [31:0] pc_out_check;
+  logic [31:0] pc_check;
 
   assign initial_instructions[0] = jal_x8_8;
 
@@ -1081,7 +1081,7 @@ module test_cpu_jal;
       .initial_instructions(initial_instructions),
       .initial_register_values(initial_register_values),
       .initial_memory_values(initial_memory_values),
-      .pc_out_check(pc_out_check),
+      .pc_check(pc_check),
       .register_check(register_check)
   );
 
@@ -1094,8 +1094,8 @@ module test_cpu_jal;
     clk = 0;
     #10 clk = 1;
     #10
-    assert (pc_out_check == 8)
-    else $error("pc_out_check = %d", pc_out_check);
+    assert (pc_check == 8)
+    else $error("pc_check = %d", pc_check);
     assert (register_check[8] == 4)
     else $error("register_check[8] = %d", register_check[8]);
   end
@@ -1109,7 +1109,7 @@ module test_cpu_jalr;
   logic [31:0] initial_register_values[32];
   logic [31:0] initial_memory_values[32];
   wire [31:0] register_check[32];
-  logic [31:0] pc_out_check;
+  logic [31:0] pc_check;
 
   assign initial_instructions[0] = jalr_x8_x6_8;
   assign initial_register_values[6] = 4;
@@ -1120,7 +1120,7 @@ module test_cpu_jalr;
       .initial_instructions(initial_instructions),
       .initial_register_values(initial_register_values),
       .initial_memory_values(initial_memory_values),
-      .pc_out_check(pc_out_check),
+      .pc_check(pc_check),
       .register_check(register_check)
   );
 
@@ -1135,8 +1135,8 @@ module test_cpu_jalr;
     #10
     assert (register_check[8] == 4)
     else $error("register_check[8] = %d", register_check[8]);
-    assert (pc_out_check == 12)
-    else $error("pc_out_check = %d", pc_out_check);
+    assert (pc_check == 12)
+    else $error("pc_check = %d", pc_check);
   end
 endmodule
 
@@ -1161,7 +1161,7 @@ module test_cpu_bne_taken;
   logic [31:0] initial_register_values[32];
   logic [31:0] initial_memory_values[32];
   wire [31:0] register_check[32];
-  logic [31:0] pc_out_check;
+  logic [31:0] pc_check;
 
   assign initial_instructions[0] = bne_x8_x6_8;
   assign initial_register_values[6] = 4;
@@ -1173,7 +1173,7 @@ module test_cpu_bne_taken;
       .initial_instructions(initial_instructions),
       .initial_register_values(initial_register_values),
       .initial_memory_values(initial_memory_values),
-      .pc_out_check(pc_out_check),
+      .pc_check(pc_check),
       .register_check(register_check)
   );
 
@@ -1186,8 +1186,8 @@ module test_cpu_bne_taken;
     clk = 0;
     #10 clk = 1;
     #10
-    assert (pc_out_check == 8)
-    else $error("pc_out_check = %d", pc_out_check);
+    assert (pc_check == 8)
+    else $error("pc_check = %d", pc_check);
   end
 endmodule
 
@@ -1198,7 +1198,7 @@ module test_cpu_bne_not_taken;
   logic [31:0] initial_register_values[32];
   logic [31:0] initial_memory_values[32];
   wire [31:0] register_check[32];
-  logic [31:0] pc_out_check;
+  logic [31:0] pc_check;
 
   assign initial_instructions[0] = bne_x8_x6_8;
   assign initial_register_values[6] = 4;
@@ -1210,7 +1210,7 @@ module test_cpu_bne_not_taken;
       .initial_instructions(initial_instructions),
       .initial_register_values(initial_register_values),
       .initial_memory_values(initial_memory_values),
-      .pc_out_check(pc_out_check),
+      .pc_check(pc_check),
       .register_check(register_check)
   );
 
@@ -1223,8 +1223,8 @@ module test_cpu_bne_not_taken;
     clk = 0;
     #10 clk = 1;
     #10
-    assert (pc_out_check == 4)
-    else $error("pc_out_check = %d", pc_out_check);
+    assert (pc_check == 4)
+    else $error("pc_check = %d", pc_check);
   end
 endmodule
 
@@ -1236,7 +1236,7 @@ module test_cpu_beq_taken;
   logic [31:0] initial_register_values[32];
   logic [31:0] initial_memory_values[32];
   wire [31:0] register_check[32];
-  logic [31:0] pc_out_check;
+  logic [31:0] pc_check;
 
   assign initial_instructions[0] = beq_x8_x6_8;
   assign initial_register_values[6] = 4;
@@ -1248,7 +1248,7 @@ module test_cpu_beq_taken;
       .initial_instructions(initial_instructions),
       .initial_register_values(initial_register_values),
       .initial_memory_values(initial_memory_values),
-      .pc_out_check(pc_out_check),
+      .pc_check(pc_check),
       .register_check(register_check)
   );
 
@@ -1261,8 +1261,8 @@ module test_cpu_beq_taken;
     clk = 0;
     #10 clk = 1;
     #10
-    assert (pc_out_check == 8)
-    else $error("pc_out_check = %d", pc_out_check);
+    assert (pc_check == 8)
+    else $error("pc_check = %d", pc_check);
   end
 endmodule
 
@@ -1273,7 +1273,7 @@ module test_cpu_beq_not_taken;
   logic [31:0] initial_register_values[32];
   logic [31:0] initial_memory_values[32];
   wire [31:0] register_check[32];
-  logic [31:0] pc_out_check;
+  logic [31:0] pc_check;
 
   assign initial_instructions[0] = beq_x8_x6_8;
   assign initial_register_values[6] = 4;
@@ -1285,7 +1285,7 @@ module test_cpu_beq_not_taken;
       .initial_instructions(initial_instructions),
       .initial_register_values(initial_register_values),
       .initial_memory_values(initial_memory_values),
-      .pc_out_check(pc_out_check),
+      .pc_check(pc_check),
       .register_check(register_check)
   );
 
@@ -1298,8 +1298,8 @@ module test_cpu_beq_not_taken;
     clk = 0;
     #10 clk = 1;
     #10
-    assert (pc_out_check == 4)
-    else $error("pc_out_check = %d", pc_out_check);
+    assert (pc_check == 4)
+    else $error("pc_check = %d", pc_check);
   end
 endmodule
 

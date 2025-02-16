@@ -2,13 +2,13 @@ module pc (
     input logic clk,
     input logic reset,
     input logic [31:0] pc_next,
-    output logic [31:0] pc_out
+    output logic [31:0] pc
 );
   always_ff @(posedge clk) begin
     if (reset) begin
-      pc_out <= 0;
+      pc <= 0;
     end else begin
-      pc_out <= pc_next;
+      pc <= pc_next;
     end
   end
 endmodule
@@ -434,7 +434,7 @@ module cpu (
     input logic [31:0] initial_instructions[32],
     input logic [31:0] initial_register_values[32],
     input logic [31:0] initial_memory_values[32],
-    output logic [31:0] pc_out_check,
+    output logic [31:0] pc_check,
     output logic [31:0] instruction_check,
     output logic [3:0] alu_op_check,
     output logic [31:0] register_data_out1_check,
@@ -456,17 +456,17 @@ module cpu (
       .reset(reset),
       .pc_next(pc_next_mux_0.pc_next)
   );
-  assign pc_out_check = pc_0.pc_out;
+  assign pc_check = pc_0.pc;
 
-  pc_plus_4 pc_plus_4_0 (.pc_in(pc_0.pc_out));
+  pc_plus_4 pc_plus_4_0 (.pc_in(pc_0.pc));
 
   jal_addr jal_addr_0 (
-      .pc(pc_0.pc_out),
+      .pc(pc_0.pc),
       .instruction(instruction_memory_0.instruction)
   );
 
   beq_or_bne_addr beq_or_bne_addr_0 (
-      .pc(pc_0.pc_out),
+      .pc(pc_0.pc),
       .instruction(instruction_memory_0.instruction),
       .imm_ext(sign_extend_0.imm_ext)
   );
@@ -480,7 +480,7 @@ module cpu (
   );
 
   instruction_memory instruction_memory_0 (
-      .pc(pc_0.pc_out),
+      .pc(pc_0.pc),
       .initial_instructions(initial_instructions)
   );
   assign instruction_check = instruction_memory_0.instruction;
