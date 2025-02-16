@@ -450,16 +450,13 @@ module cpu (
     output logic [2:0] sign_extend_type_check
 );
   logic [31:0] pc_in;
-  logic [ 3:0] alu_op;
   logic [31:0] register_data_out1;
   logic [31:0] register_data_out2;
   logic [31:0] register_data_in;
-  logic [ 0:0] reg_write;
   logic [31:0] alu_result;
   logic [31:0] imm_ext;
   logic [ 0:0] use_imm;
   logic [ 2:0] sign_extend_type;
-  logic [ 0:0] memory_write;
 
   pc pc_0 (
       .clk(clk),
@@ -502,13 +499,11 @@ module cpu (
       .funct7(instruction_memory_0.instruction[31:25]),
       .alu_op(alu_op),
       .alu_eq(alu_0.alu_eq),
-      .reg_write(reg_write),
       .use_imm(use_imm),
-      .sign_extend_type(sign_extend_type),
-      .memory_write(memory_write)
+      .sign_extend_type(sign_extend_type)
   );
-  assign alu_op_check = alu_op;
-  assign reg_write_check = reg_write;
+  assign alu_op_check = control_unit_0.alu_op;
+  assign reg_write_check = control_unit_0.reg_write;
   assign use_imm_check = use_imm;
   assign sign_extend_type_check = sign_extend_type;
 
@@ -526,7 +521,7 @@ module cpu (
       .data_in(register_data_in),
       .clk(clk),
       .reset(reset),
-      .write_enable(reg_write),
+      .write_enable(control_unit_0.reg_write),
       .data_out1(register_data_out1),
       .data_out2(register_data_out2),
       .register_check(register_check),
@@ -548,7 +543,7 @@ module cpu (
   alu alu_0 (
       .a(register_data_out1),
       .b(b_input),
-      .alu_op(alu_op),
+      .alu_op(control_unit_0.alu_op),
       .result(alu_result)
   );
   assign alu_result_check = alu_result;
@@ -558,7 +553,7 @@ module cpu (
   memory memory_0 (
       .address(alu_result),
       .data_in(register_data_out2),
-      .write_enable(memory_write),
+      .write_enable(control_unit_0.memory_write),
       .clk(clk),
       .reset(reset),
       .data_out(memory_data),
