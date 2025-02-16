@@ -128,7 +128,7 @@ endmodule
 
 
 module test_register_file;
-  logic [4:0] rs1;
+  logic [4:0] rs1_addr;
   logic [4:0] rs2;
   logic [4:0] rd;
   logic [31:0] data_in;
@@ -150,7 +150,7 @@ module test_register_file;
   endgenerate
 
   register_file register_file_0 (
-      .rs1(rs1),
+      .rs1_addr(rs1_addr),
       .rs2(rs2),
       .rd(rd),
       .data_in(data_in),
@@ -170,7 +170,7 @@ module test_register_file;
     clk = 1;
     #10 clk = 0;
     reset = 0;
-    rs1 = 1;
+    rs1_addr = 1;
     rs2 = 2;
     rd = 3;
     data_in = 32'hdeadbeef;
@@ -188,7 +188,7 @@ module test_register_file;
     else $error("register_check[2] = %h", register_check[2]);
     assert (register_check[3] == 32'hdeadbeef)
     else $error("register_check[3] = %h", register_check[3]);
-    #10 rs1 = 0;
+    #10 rs1_addr = 0;
     clk = 0;
     #10 clk = 1;
     #10

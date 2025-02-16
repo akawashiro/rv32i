@@ -71,7 +71,7 @@ module memory (
 endmodule
 
 module register_file (
-    input logic [4:0] rs1,
+    input logic [4:0] rs1_addr,
     input logic [4:0] rs2,
     input logic [4:0] rd,
     input logic [31:0] data_in,
@@ -87,7 +87,7 @@ module register_file (
 
   always_comb begin
     registers[0] = 0;
-    data_out1 = registers[rs1];
+    data_out1 = registers[rs1_addr];
     data_out2 = registers[rs2];
     for (int j = 0; j < 32; j = j + 1) begin
       register_check[j] = registers[j];
@@ -501,7 +501,7 @@ module cpu (
   assign imm_ext_check = sign_extend_0.imm_ext;
 
   register_file register_file_0 (
-      .rs1(instruction_memory_0.instruction[19:15]),
+      .rs1_addr(instruction_memory_0.instruction[19:15]),
       .rs2(instruction_memory_0.instruction[24:20]),
       .rd(instruction_memory_0.instruction[11:7]),
       .data_in(register_data_in_mux_0.register_data_in),
@@ -517,8 +517,7 @@ module cpu (
   b_input_mux b_input_mux_0 (
       .register_data_out2(register_file_0.data_out2),
       .imm_ext(sign_extend_0.imm_ext),
-      .use_imm(control_unit_0.use_imm),
-      .b_input(b_input)
+      .use_imm(control_unit_0.use_imm)
   );
   assign b_input_check = b_input_mux_0.b_input;
 
