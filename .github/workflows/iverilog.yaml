@@ -8,7 +8,7 @@ jobs:
     - name: Install requirements
       run: sudo apt-get install iverilog
     - name: Run iVerilog
-      run: ./run.sh
+      run: ./run_unit_tests.sh
   fib:
     runs-on: ubuntu-latest
     steps:
@@ -16,4 +16,4 @@ jobs:
     - name: Install requirements
       run: sudo apt-get install iverilog
     - name: Run iVerilog
-      run: ./fib.sh
+      run: ./run_fib.sh
