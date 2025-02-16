@@ -14,15 +14,15 @@ module test_pc;
   );
 
   initial begin
-    clk   = 0;
+    clk = 0;
     pc_next = 4;
-    clk   = 1;
+    clk = 1;
     #10
     assert (pc_out == 4)
     else $error("pc_out = %d", pc_out);
-    clk   = 0;
+    clk = 0;
     pc_next = 8;
-    clk   = 1;
+    clk = 1;
     #10
     assert (pc_out == 8)
     else $error("pc_out = %d", pc_out);
@@ -32,9 +32,7 @@ endmodule
 module test_pc_plus_4;
   logic [31:0] pc_in;
 
-  pc_plus_4 pc_plus_4_0 (
-      .pc_in (pc_in)
-  );
+  pc_plus_4 pc_plus_4_0 (.pc_in(pc_in));
 
   initial begin
     pc_in = 4;
