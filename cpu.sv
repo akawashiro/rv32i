@@ -122,7 +122,7 @@ typedef enum logic [3:0] {
 module alu (
     input logic signed [31:0] a,
     input logic signed [31:0] b,
-    input logic [3:0] alu_op,
+    input alu_op_t alu_op,
     output logic [31:0] result,
     output logic alu_eq
 );
@@ -152,8 +152,8 @@ typedef enum logic [2:0] {
 } sign_extend_t;
 
 module sign_extend (
-    input  logic [31:0] instruction,
-    input  logic [ 2:0] sign_extend_type,
+    input logic [31:0] instruction,
+    input sign_extend_t sign_extend_type,
     output logic [31:0] imm_ext
 );
   logic [31:0] addi_imm_ext;
@@ -188,18 +188,31 @@ typedef enum logic [6:0] {
   BEQ = 7'b1100011
 } opcode_t;
 
+typedef enum logic [1:0] {
+  REGISTER_DATA_IN_MUX_ALU_RESULT,
+  REGISTER_DATA_IN_MUX_MEMORY_DATA,
+  REGISTER_DATA_IN_MUX_PC_PLUS_4
+} register_data_in_mux_sel_t;
+
+typedef enum logic [2:0] {
+  PC_NEXT_MUX_PC_PLUS_4,
+  PC_NEXT_MUX_JAL_ADDR,
+  PC_NEXT_MUX_ALU_RESULT,
+  PC_NEXT_MUX_BEQ_OR_BNE_ADDR
+} pc_next_mux_sel_t;
+
 module control_unit (
-    input logic [6:0] opcode,
+    input opcode_t opcode,
     input logic [2:0] funct3,
     input logic [6:0] funct7,
     input logic alu_eq,
-    output logic [3:0] alu_op,
-    output logic [0:0] reg_write,
+    output alu_op_t alu_op,
+    output logic reg_write,
     output logic use_imm,
-    output logic [1:0] register_data_in_mux_sel,
-    output logic [2:0] sign_extend_type,
-    output logic [0:0] memory_write,
-    output logic [2:0] pc_next_mux_sel
+    output register_data_in_mux_sel_t register_data_in_mux_sel,
+    output sign_extend_t sign_extend_type,
+    output logic memory_write,
+    output pc_next_mux_sel_t pc_next_mux_sel
 );
   always_comb begin
     case (opcode)
@@ -353,17 +366,11 @@ module b_input_mux (
   assign b_input = use_imm ? imm_ext : register_data_out2;
 endmodule
 
-typedef enum logic [1:0] {
-  REGISTER_DATA_IN_MUX_ALU_RESULT,
-  REGISTER_DATA_IN_MUX_MEMORY_DATA,
-  REGISTER_DATA_IN_MUX_PC_PLUS_4
-} register_data_in_mux_sel_t;
-
 module register_data_in_mux (
-    input  logic [31:0] alu_result,
-    input  logic [31:0] memory_data,
-    input  logic [31:0] pc_plus_4,
-    input  logic [ 1:0] register_data_in_mux_sel,
+    input logic [31:0] alu_result,
+    input logic [31:0] memory_data,
+    input logic [31:0] pc_plus_4,
+    input register_data_in_mux_sel_t register_data_in_mux_sel,
     output logic [31:0] register_data_in
 );
   always_comb begin
@@ -402,19 +409,12 @@ module beq_or_bne_addr (
   assign beq_or_bne_addr = pc + beq_or_bne_imm;
 endmodule
 
-typedef enum logic [2:0] {
-  PC_NEXT_MUX_PC_PLUS_4,
-  PC_NEXT_MUX_JAL_ADDR,
-  PC_NEXT_MUX_ALU_RESULT,
-  PC_NEXT_MUX_BEQ_OR_BNE_ADDR
-} pc_next_mux_sel_t;
-
 module pc_next_mux (
-    input  logic [31:0] pc_plus_4,
-    input  logic [31:0] jal_addr,
-    input  logic [31:0] alu_result,
-    input  logic [31:0] beq_or_bne_addr,
-    input  logic [ 2:0] pc_next_mux_sel,
+    input logic [31:0] pc_plus_4,
+    input logic [31:0] jal_addr,
+    input logic [31:0] alu_result,
+    input logic [31:0] beq_or_bne_addr,
+    input pc_next_mux_sel_t pc_next_mux_sel,
     output logic [31:0] pc_next
 );
   always_comb begin
@@ -442,9 +442,9 @@ module cpu (
     output logic [31:0] b_input_check,
     output logic [31:0] register_data_in_check,
     output logic [31:0] alu_result_check,
-    output logic [0:0] reg_write_check,
+    output logic reg_write_check,
     output logic [31:0] imm_ext_check,
-    output logic [0:0] use_imm_check,
+    output logic use_imm_check,
     output wire [31:0] register_check[32],
     output wire [31:0] memory_check[32],
     output logic [2:0] sign_extend_type_check
