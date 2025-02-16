@@ -130,7 +130,7 @@ endmodule
 module test_register_file;
   logic [4:0] rs1_addr;
   logic [4:0] rs2_addr;
-  logic [4:0] rd;
+  logic [4:0] rd_addr;
   logic [31:0] data_in;
   logic clk;
   logic reset;
@@ -152,7 +152,7 @@ module test_register_file;
   register_file register_file_0 (
       .rs1_addr(rs1_addr),
       .rs2_addr(rs2_addr),
-      .rd(rd),
+      .rd_addr(rd_addr),
       .data_in(data_in),
       .clk(clk),
       .reset(reset),
@@ -172,7 +172,7 @@ module test_register_file;
     reset = 0;
     rs1_addr = 1;
     rs2_addr = 2;
-    rd = 3;
+    rd_addr = 3;
     data_in = 32'hdeadbeef;
     write_enable = 0;
     clk = 1;

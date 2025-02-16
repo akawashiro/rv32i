@@ -73,7 +73,7 @@ endmodule
 module register_file (
     input logic [4:0] rs1_addr,
     input logic [4:0] rs2_addr,
-    input logic [4:0] rd,
+    input logic [4:0] rd_addr,
     input logic [31:0] data_in,
     input logic clk,
     input logic reset,
@@ -100,8 +100,8 @@ module register_file (
         registers[i] <= initial_values[i];
       end
     end else begin
-      if (write_enable && rd[4:0] != 0) begin
-        registers[rd[4:0]] <= data_in;
+      if (write_enable && rd_addr[4:0] != 0) begin
+        registers[rd_addr[4:0]] <= data_in;
       end
     end
 endmodule
@@ -503,7 +503,7 @@ module cpu (
   register_file register_file_0 (
       .rs1_addr(instruction_memory_0.instruction[19:15]),
       .rs2_addr(instruction_memory_0.instruction[24:20]),
-      .rd(instruction_memory_0.instruction[11:7]),
+      .rd_addr(instruction_memory_0.instruction[11:7]),
       .data_in(register_data_in_mux_0.register_data_in),
       .clk(clk),
       .reset(reset),
