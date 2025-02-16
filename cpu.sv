@@ -1,23 +1,23 @@
 module pc (
     input logic clk,
     input logic reset,
-    input logic [31:0] pc_in,
+    input logic [31:0] pc_next,
     output logic [31:0] pc_out
 );
   always_ff @(posedge clk) begin
     if (reset) begin
       pc_out <= 0;
     end else begin
-      pc_out <= pc_in;
+      pc_out <= pc_next;
     end
   end
 endmodule
 
 module pc_plus_4 (
     input  logic [31:0] pc_in,
-    output logic [31:0] pc_out
+    output logic [31:0] pc_next
 );
-  assign pc_out = pc_in + 4;
+  assign pc_next = pc_in + 4;
 endmodule
 
 module instruction_memory (
@@ -199,7 +199,7 @@ module control_unit (
     output logic [1:0] register_data_in_mux_sel,
     output logic [2:0] sign_extend_type,
     output logic [0:0] memory_write,
-    output logic [2:0] pc_in_mux_sel
+    output logic [2:0] pc_next_mux_sel
 );
   always_comb begin
     case (opcode)
@@ -212,19 +212,19 @@ module control_unit (
         unique case (alu_eq)
           1'b0: begin
             case (funct3)
-              3'b000:  pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;  // BEQ
-              3'b001:  pc_in_mux_sel = PC_IN_MUX_BEQ_OR_BNE_ADDR;  // BNE
-              default: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+              3'b000:  pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;  // BEQ
+              3'b001:  pc_next_mux_sel = PC_NEXT_MUX_BEQ_OR_BNE_ADDR;  // BNE
+              default: pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;
             endcase
           end
           1'b1: begin
             case (funct3)
-              3'b000:  pc_in_mux_sel = PC_IN_MUX_BEQ_OR_BNE_ADDR;  // BEQ
-              3'b001:  pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;  // BNE
-              default: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+              3'b000:  pc_next_mux_sel = PC_NEXT_MUX_BEQ_OR_BNE_ADDR;  // BEQ
+              3'b001:  pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;  // BNE
+              default: pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;
             endcase
           end
-          default: pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+          default: pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;
         endcase
       end
       JAL: begin
@@ -233,7 +233,7 @@ module control_unit (
         use_imm = 0;
         sign_extend_type = ADDI_SIGN_EXTEND;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_PC_PLUS_4;
-        pc_in_mux_sel = PC_IN_MUX_JAL_ADDR;
+        pc_next_mux_sel = PC_NEXT_MUX_JAL_ADDR;
       end
       JALR: begin
         alu_op = ADD;
@@ -241,7 +241,7 @@ module control_unit (
         use_imm = 1;
         sign_extend_type = ADDI_SIGN_EXTEND;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_PC_PLUS_4;
-        pc_in_mux_sel = PC_IN_MUX_ALU_RESULT;
+        pc_next_mux_sel = PC_NEXT_MUX_ALU_RESULT;
       end
       ALU_WITH_TWO_REGISTERS: begin
         unique case (funct3)
@@ -264,7 +264,7 @@ module control_unit (
         reg_write = 1;
         use_imm = 0;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_ALU_RESULT;
-        pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+        pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;
       end
       ALU_WITH_IMMEDIATE: begin
         case (funct3)
@@ -304,7 +304,7 @@ module control_unit (
         reg_write = 1;
         use_imm = 1;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_ALU_RESULT;
-        pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+        pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;
       end
       LUI: begin
         alu_op = BPASS;
@@ -312,7 +312,7 @@ module control_unit (
         use_imm = 1;
         sign_extend_type = LUI_SIGN_EXTEND;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_ALU_RESULT;
-        pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+        pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;
       end
       LW: begin
         alu_op = ADD;
@@ -320,7 +320,7 @@ module control_unit (
         use_imm = 1;
         sign_extend_type = ADDI_SIGN_EXTEND;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_MEMORY_DATA;
-        pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+        pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;
       end
       SW: begin
         alu_op = ADD;
@@ -329,7 +329,7 @@ module control_unit (
         sign_extend_type = SW_SIGN_EXTEND;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_MEMORY_DATA;
         memory_write = 1;
-        pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+        pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;
       end
       default: begin
         alu_op = ADD;
@@ -337,7 +337,7 @@ module control_unit (
         use_imm = 0;
         sign_extend_type = ADDI_SIGN_EXTEND;
         register_data_in_mux_sel = REGISTER_DATA_IN_MUX_PC_PLUS_4;
-        pc_in_mux_sel = PC_IN_MUX_PC_PLUS_4;
+        pc_next_mux_sel = PC_NEXT_MUX_PC_PLUS_4;
       end
     endcase
   end
@@ -403,27 +403,27 @@ module beq_or_bne_addr (
 endmodule
 
 typedef enum logic [2:0] {
-  PC_IN_MUX_PC_PLUS_4,
-  PC_IN_MUX_JAL_ADDR,
-  PC_IN_MUX_ALU_RESULT,
-  PC_IN_MUX_BEQ_OR_BNE_ADDR
-} pc_in_mux_sel_t;
+  PC_NEXT_MUX_PC_PLUS_4,
+  PC_NEXT_MUX_JAL_ADDR,
+  PC_NEXT_MUX_ALU_RESULT,
+  PC_NEXT_MUX_BEQ_OR_BNE_ADDR
+} pc_next_mux_sel_t;
 
-module pc_in_mux (
+module pc_next_mux (
     input  logic [31:0] pc_plus_4,
     input  logic [31:0] jal_addr,
     input  logic [31:0] alu_result,
     input  logic [31:0] beq_or_bne_addr,
-    input  logic [ 2:0] pc_in_mux_sel,
-    output logic [31:0] pc_in
+    input  logic [ 2:0] pc_next_mux_sel,
+    output logic [31:0] pc_next
 );
   always_comb begin
-    unique case (pc_in_mux_sel)
-      PC_IN_MUX_PC_PLUS_4: pc_in = pc_plus_4;
-      PC_IN_MUX_JAL_ADDR: pc_in = jal_addr;
-      PC_IN_MUX_ALU_RESULT: pc_in = alu_result;
-      PC_IN_MUX_BEQ_OR_BNE_ADDR: pc_in = beq_or_bne_addr;
-      default: pc_in = 0;
+    unique case (pc_next_mux_sel)
+      PC_NEXT_MUX_PC_PLUS_4: pc_next = pc_plus_4;
+      PC_NEXT_MUX_JAL_ADDR: pc_next = jal_addr;
+      PC_NEXT_MUX_ALU_RESULT: pc_next = alu_result;
+      PC_NEXT_MUX_BEQ_OR_BNE_ADDR: pc_next = beq_or_bne_addr;
+      default: pc_next = 0;
     endcase
   end
 endmodule
@@ -449,120 +449,95 @@ module cpu (
     output wire [31:0] memory_check[32],
     output logic [2:0] sign_extend_type_check
 );
-  logic [31:0] pc_in;
-  logic [31:0] pc_out;
-  logic [31:0] instruction;
-  logic [ 3:0] alu_op;
-  logic [31:0] register_data_out1;
-  logic [31:0] register_data_out2;
   logic [31:0] register_data_in;
-  logic [ 0:0] reg_write;
-  logic [31:0] alu_result;
-  logic [31:0] imm_ext;
-  logic [ 0:0] use_imm;
-  logic [ 2:0] sign_extend_type;
-  logic [ 0:0] memory_write;
 
   pc pc_0 (
       .clk(clk),
       .reset(reset),
-      .pc_in(pc_in),
-      .pc_out(pc_out)
+      .pc_next(pc_next_mux_0.pc_next)
   );
-  assign pc_out_check = pc_out;
+  assign pc_out_check = pc_0.pc_out;
 
-  pc_plus_4 pc_plus_4_0 (.pc_in(pc_out));
+  pc_plus_4 pc_plus_4_0 (.pc_in(pc_0.pc_out));
 
   jal_addr jal_addr_0 (
-      .pc(pc_out),
-      .instruction(instruction)
+      .pc(pc_0.pc_out),
+      .instruction(instruction_memory_0.instruction)
   );
 
   beq_or_bne_addr beq_or_bne_addr_0 (
-      .pc(pc_out),
-      .instruction(instruction),
-      .imm_ext(imm_ext)
+      .pc(pc_0.pc_out),
+      .instruction(instruction_memory_0.instruction),
+      .imm_ext(sign_extend_0.imm_ext)
   );
 
-  pc_in_mux pc_in_mux_0 (
-      .pc_plus_4(pc_plus_4_0.pc_out),
+  pc_next_mux pc_next_mux_0 (
+      .pc_plus_4(pc_plus_4_0.pc_next),
       .jal_addr(jal_addr_0.jal_addr),
-      .alu_result(alu_result),
+      .alu_result(alu_0.result),
       .beq_or_bne_addr(beq_or_bne_addr_0.beq_or_bne_addr),
-      .pc_in_mux_sel(control_unit_0.pc_in_mux_sel),
-      .pc_in(pc_in)
+      .pc_next_mux_sel(control_unit_0.pc_next_mux_sel)
   );
 
   instruction_memory instruction_memory_0 (
-      .pc(pc_out),
-      .instruction(instruction),
+      .pc(pc_0.pc_out),
       .initial_instructions(initial_instructions)
   );
-  assign instruction_check = instruction;
+  assign instruction_check = instruction_memory_0.instruction;
 
   control_unit control_unit_0 (
-      .opcode(instruction[6:0]),
-      .funct3(instruction[14:12]),
-      .funct7(instruction[31:25]),
-      .alu_op(alu_op),
-      .alu_eq(alu_0.alu_eq),
-      .reg_write(reg_write),
-      .use_imm(use_imm),
-      .sign_extend_type(sign_extend_type),
-      .memory_write(memory_write)
+      .opcode(instruction_memory_0.instruction[6:0]),
+      .funct3(instruction_memory_0.instruction[14:12]),
+      .funct7(instruction_memory_0.instruction[31:25]),
+      .alu_eq(alu_0.alu_eq)
   );
-  assign alu_op_check = alu_op;
-  assign reg_write_check = reg_write;
-  assign use_imm_check = use_imm;
-  assign sign_extend_type_check = sign_extend_type;
+  assign alu_op_check = control_unit_0.alu_op;
+  assign reg_write_check = control_unit_0.reg_write;
+  assign use_imm_check = control_unit_0.use_imm;
+  assign sign_extend_type_check = control_unit_0.sign_extend_type;
 
   sign_extend sign_extend_0 (
-      .instruction(instruction),
-      .sign_extend_type(sign_extend_type),
-      .imm_ext(imm_ext)
+      .instruction(instruction_memory_0.instruction),
+      .sign_extend_type(control_unit_0.sign_extend_type)
   );
-  assign imm_ext_check = imm_ext;
+  assign imm_ext_check = sign_extend_0.imm_ext;
 
   register_file register_file_0 (
-      .rs1(instruction[19:15]),
-      .rs2(instruction[24:20]),
-      .rd(instruction[11:7]),
-      .data_in(register_data_in),
+      .rs1(instruction_memory_0.instruction[19:15]),
+      .rs2(instruction_memory_0.instruction[24:20]),
+      .rd(instruction_memory_0.instruction[11:7]),
+      .data_in(register_data_in_mux_0.register_data_in),
       .clk(clk),
       .reset(reset),
-      .write_enable(reg_write),
-      .data_out1(register_data_out1),
-      .data_out2(register_data_out2),
+      .write_enable(control_unit_0.reg_write),
       .register_check(register_check),
       .initial_values(initial_register_values)
   );
-  assign register_data_out1_check = register_data_out1;
-  assign register_data_out2_check = register_data_out2;
-  assign register_data_in_check   = register_data_in;
+  assign register_data_out1_check = register_file_0.data_out1;
+  assign register_data_out2_check = register_file_0.data_out2;
 
   logic [31:0] b_input;
   b_input_mux b_input_mux_0 (
-      .register_data_out2(register_data_out2),
-      .imm_ext(imm_ext),
-      .use_imm(use_imm),
+      .register_data_out2(register_file_0.data_out2),
+      .imm_ext(sign_extend_0.imm_ext),
+      .use_imm(control_unit_0.use_imm),
       .b_input(b_input)
   );
   assign b_input_check = b_input;
 
   alu alu_0 (
-      .a(register_data_out1),
+      .a(register_file_0.data_out1),
       .b(b_input),
-      .alu_op(alu_op),
-      .result(alu_result)
+      .alu_op(control_unit_0.alu_op)
   );
-  assign alu_result_check = alu_result;
+  assign alu_result_check = alu_0.result;
 
   logic [31:0] memory_data;
 
   memory memory_0 (
-      .address(alu_result),
-      .data_in(register_data_out2),
-      .write_enable(memory_write),
+      .address(alu_0.result),
+      .data_in(register_file_0.data_out2),
+      .write_enable(control_unit_0.memory_write),
       .clk(clk),
       .reset(reset),
       .data_out(memory_data),
@@ -571,10 +546,10 @@ module cpu (
   );
 
   register_data_in_mux register_data_in_mux_0 (
-      .alu_result(alu_result),
+      .alu_result(alu_0.result),
       .memory_data(memory_data),
-      .pc_plus_4(pc_plus_4_0.pc_out),
-      .register_data_in_mux_sel(control_unit_0.register_data_in_mux_sel),
-      .register_data_in(register_data_in)
+      .pc_plus_4(pc_plus_4_0.pc_next),
+      .register_data_in_mux_sel(control_unit_0.register_data_in_mux_sel)
   );
+  assign register_data_in_check = register_data_in_mux_0.register_data_in;
 endmodule

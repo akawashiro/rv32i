@@ -3,26 +3,26 @@
 module test_pc;
   logic clk;
   logic reset;
-  logic [31:0] pc_in;
+  logic [31:0] pc_next;
   logic [31:0] pc_out;
 
   pc pc_inst (
       .clk(clk),
       .reset(reset),
-      .pc_in(pc_in),
+      .pc_next(pc_next),
       .pc_out(pc_out)
   );
 
   initial begin
-    clk   = 0;
-    pc_in = 4;
-    clk   = 1;
+    clk = 0;
+    pc_next = 4;
+    clk = 1;
     #10
     assert (pc_out == 4)
     else $error("pc_out = %d", pc_out);
-    clk   = 0;
-    pc_in = 8;
-    clk   = 1;
+    clk = 0;
+    pc_next = 8;
+    clk = 1;
     #10
     assert (pc_out == 8)
     else $error("pc_out = %d", pc_out);
@@ -31,20 +31,16 @@ endmodule
 
 module test_pc_plus_4;
   logic [31:0] pc_in;
-  logic [31:0] pc_out;
 
-  pc_plus_4 pc_plus_4_inst (
-      .pc_in (pc_in),
-      .pc_out(pc_out)
-  );
+  pc_plus_4 pc_plus_4_0 (.pc_in(pc_in));
 
   initial begin
     pc_in = 4;
-    assert (pc_out == 8)
-    else $error("pc_out = %d", pc_out);
+    assert (pc_plus_4_0.pc_next == 8)
+    else $error("pc_out = %d", pc_plus_4_0.pc_next);
     pc_in = 8;
-    assert (pc_out == 12)
-    else $error("pc_out = %d", pc_out);
+    assert (pc_plus_4_0.pc_next == 12)
+    else $error("pc_out = %d", pc_plus_4_0.pc_next);
   end
 endmodule
 
