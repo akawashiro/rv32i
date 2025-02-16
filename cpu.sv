@@ -451,8 +451,6 @@ module cpu (
 );
   logic [31:0] pc_in;
   logic [31:0] register_data_in;
-  logic [31:0] imm_ext;
-  logic [ 0:0] use_imm;
 
   pc pc_0 (
       .clk(clk),
@@ -471,7 +469,7 @@ module cpu (
   beq_or_bne_addr beq_or_bne_addr_0 (
       .pc(pc_0.pc_out),
       .instruction(instruction_memory_0.instruction),
-      .imm_ext(imm_ext)
+      .imm_ext(sign_extend_0.imm_ext)
   );
 
   pc_in_mux pc_in_mux_0 (
@@ -494,20 +492,18 @@ module cpu (
       .funct3(instruction_memory_0.instruction[14:12]),
       .funct7(instruction_memory_0.instruction[31:25]),
       .alu_op(alu_op),
-      .alu_eq(alu_0.alu_eq),
-      .use_imm(use_imm)
+      .alu_eq(alu_0.alu_eq)
   );
   assign alu_op_check = control_unit_0.alu_op;
   assign reg_write_check = control_unit_0.reg_write;
-  assign use_imm_check = use_imm;
+  assign use_imm_check = control_unit_0.use_imm;
   assign sign_extend_type_check = control_unit_0.sign_extend_type;
 
   sign_extend sign_extend_0 (
       .instruction(instruction_memory_0.instruction),
-      .sign_extend_type(control_unit_0.sign_extend_type),
-      .imm_ext(imm_ext)
+      .sign_extend_type(control_unit_0.sign_extend_type)
   );
-  assign imm_ext_check = imm_ext;
+  assign imm_ext_check = sign_extend_0.imm_ext;
 
   register_file register_file_0 (
       .rs1(instruction_memory_0.instruction[19:15]),
@@ -527,8 +523,8 @@ module cpu (
   logic [31:0] b_input;
   b_input_mux b_input_mux_0 (
       .register_data_out2(register_file_0.data_out2),
-      .imm_ext(imm_ext),
-      .use_imm(use_imm),
+      .imm_ext(sign_extend_0.imm_ext),
+      .use_imm(control_unit_0.use_imm),
       .b_input(b_input)
   );
   assign b_input_check = b_input;
