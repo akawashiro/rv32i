@@ -442,9 +442,9 @@ module cpu (
     output logic [31:0] b_input_check,
     output logic [31:0] register_data_in_check,
     output logic [31:0] alu_result_check,
-    output logic [0:0] reg_write_check,
+    output logic reg_write_check,
     output logic [31:0] imm_ext_check,
-    output logic [0:0] use_imm_check,
+    output logic use_imm_check,
     output wire [31:0] register_check[32],
     output wire [31:0] memory_check[32],
     output logic [2:0] sign_extend_type_check
