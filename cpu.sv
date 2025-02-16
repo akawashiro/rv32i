@@ -72,7 +72,7 @@ endmodule
 
 module register_file (
     input logic [4:0] rs1_addr,
-    input logic [4:0] rs2,
+    input logic [4:0] rs2_addr,
     input logic [4:0] rd,
     input logic [31:0] data_in,
     input logic clk,
@@ -88,7 +88,7 @@ module register_file (
   always_comb begin
     registers[0] = 0;
     data_out1 = registers[rs1_addr];
-    data_out2 = registers[rs2];
+    data_out2 = registers[rs2_addr];
     for (int j = 0; j < 32; j = j + 1) begin
       register_check[j] = registers[j];
     end
@@ -502,7 +502,7 @@ module cpu (
 
   register_file register_file_0 (
       .rs1_addr(instruction_memory_0.instruction[19:15]),
-      .rs2(instruction_memory_0.instruction[24:20]),
+      .rs2_addr(instruction_memory_0.instruction[24:20]),
       .rd(instruction_memory_0.instruction[11:7]),
       .data_in(register_data_in_mux_0.register_data_in),
       .clk(clk),
