@@ -415,15 +415,15 @@ module pc_next_mux (
     input  logic [31:0] alu_result,
     input  logic [31:0] beq_or_bne_addr,
     input  logic [ 2:0] pc_next_mux_sel,
-    output logic [31:0] pc_in
+    output logic [31:0] pc_next
 );
   always_comb begin
     unique case (pc_next_mux_sel)
-      PC_NEXT_MUX_PC_PLUS_4: pc_in = pc_plus_4;
-      PC_NEXT_MUX_JAL_ADDR: pc_in = jal_addr;
-      PC_NEXT_MUX_ALU_RESULT: pc_in = alu_result;
-      PC_NEXT_MUX_BEQ_OR_BNE_ADDR: pc_in = beq_or_bne_addr;
-      default: pc_in = 0;
+      PC_NEXT_MUX_PC_PLUS_4: pc_next = pc_plus_4;
+      PC_NEXT_MUX_JAL_ADDR: pc_next = jal_addr;
+      PC_NEXT_MUX_ALU_RESULT: pc_next = alu_result;
+      PC_NEXT_MUX_BEQ_OR_BNE_ADDR: pc_next = beq_or_bne_addr;
+      default: pc_next = 0;
     endcase
   end
 endmodule
@@ -454,7 +454,7 @@ module cpu (
   pc pc_0 (
       .clk(clk),
       .reset(reset),
-      .pc_next(pc_next_mux_0.pc_in)
+      .pc_next(pc_next_mux_0.pc_next)
   );
   assign pc_out_check = pc_0.pc_out;
 
