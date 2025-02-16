@@ -453,7 +453,6 @@ module cpu (
   logic [31:0] register_data_in;
   logic [31:0] imm_ext;
   logic [ 0:0] use_imm;
-  logic [ 2:0] sign_extend_type;
 
   pc pc_0 (
       .clk(clk),
@@ -496,17 +495,16 @@ module cpu (
       .funct7(instruction_memory_0.instruction[31:25]),
       .alu_op(alu_op),
       .alu_eq(alu_0.alu_eq),
-      .use_imm(use_imm),
-      .sign_extend_type(sign_extend_type)
+      .use_imm(use_imm)
   );
   assign alu_op_check = control_unit_0.alu_op;
   assign reg_write_check = control_unit_0.reg_write;
   assign use_imm_check = use_imm;
-  assign sign_extend_type_check = sign_extend_type;
+  assign sign_extend_type_check = control_unit_0.sign_extend_type;
 
   sign_extend sign_extend_0 (
       .instruction(instruction_memory_0.instruction),
-      .sign_extend_type(sign_extend_type),
+      .sign_extend_type(control_unit_0.sign_extend_type),
       .imm_ext(imm_ext)
   );
   assign imm_ext_check = imm_ext;
