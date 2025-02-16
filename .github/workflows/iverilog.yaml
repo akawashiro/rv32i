@@ -9,3 +9,11 @@ jobs:
       run: sudo apt-get install iverilog
     - name: Run iVerilog
       run: ./run.sh
+  fib:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install requirements
+      run: sudo apt-get install iverilog
+    - name: Run iVerilog
+      run: ./fib.sh
