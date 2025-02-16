@@ -5,10 +5,15 @@ RV32I は RISC-V の 32bit 整数命令セットであり、命令数が少な�
 最低限の実装で妥協しているため、パイプライン化などの高度な機能は実装していません。
 また、FPGA などでの動作確認も行っていません。
 
+## テスト
 `run_unit_test.sh` で単体テストを実行することができます。
 `run_fib.sh` でフィボナッチ数列を計算するプログラムを実行することができます。
 実行環境は Ubuntu 24.04 を想定しています。
 また、実行には [Icarus Verilog](https://github.com/steveicarus/iverilog) が必要です。
+
+## フォーマッタとリンタ
+`./run_format_and_lint.sh` でフォーマッタとリンタを実行することができます。
+[verible](https://github.com/chipsalliance/verible) を使用しています。
 
 # 参考資料
 
