@@ -71,9 +71,9 @@ module memory (
 endmodule
 
 module register_file (
-    input logic [4:0] rs1,
-    input logic [4:0] rs2,
-    input logic [4:0] rd,
+    input logic [4:0] rs1_addr,
+    input logic [4:0] rs2_addr,
+    input logic [4:0] rd_addr,
     input logic [31:0] data_in,
     input logic clk,
     input logic reset,
@@ -87,8 +87,8 @@ module register_file (
 
   always_comb begin
     registers[0] = 0;
-    data_out1 = registers[rs1];
-    data_out2 = registers[rs2];
+    data_out1 = registers[rs1_addr];
+    data_out2 = registers[rs2_addr];
     for (int j = 0; j < 32; j = j + 1) begin
       register_check[j] = registers[j];
     end
@@ -100,8 +100,8 @@ module register_file (
         registers[i] <= initial_values[i];
       end
     end else begin
-      if (write_enable && rd[4:0] != 0) begin
-        registers[rd[4:0]] <= data_in;
+      if (write_enable && rd_addr[4:0] != 0) begin
+        registers[rd_addr[4:0]] <= data_in;
       end
     end
 endmodule
@@ -449,8 +449,6 @@ module cpu (
     output wire [31:0] memory_check[32],
     output logic [2:0] sign_extend_type_check
 );
-  logic [31:0] register_data_in;
-
   pc pc_0 (
       .clk(clk),
       .reset(reset),
@@ -503,9 +501,9 @@ module cpu (
   assign imm_ext_check = sign_extend_0.imm_ext;
 
   register_file register_file_0 (
-      .rs1(instruction_memory_0.instruction[19:15]),
-      .rs2(instruction_memory_0.instruction[24:20]),
-      .rd(instruction_memory_0.instruction[11:7]),
+      .rs1_addr(instruction_memory_0.instruction[19:15]),
+      .rs2_addr(instruction_memory_0.instruction[24:20]),
+      .rd_addr(instruction_memory_0.instruction[11:7]),
       .data_in(register_data_in_mux_0.register_data_in),
       .clk(clk),
       .reset(reset),
@@ -516,23 +514,19 @@ module cpu (
   assign register_data_out1_check = register_file_0.data_out1;
   assign register_data_out2_check = register_file_0.data_out2;
 
-  logic [31:0] b_input;
   b_input_mux b_input_mux_0 (
       .register_data_out2(register_file_0.data_out2),
       .imm_ext(sign_extend_0.imm_ext),
-      .use_imm(control_unit_0.use_imm),
-      .b_input(b_input)
+      .use_imm(control_unit_0.use_imm)
   );
-  assign b_input_check = b_input;
+  assign b_input_check = b_input_mux_0.b_input;
 
   alu alu_0 (
       .a(register_file_0.data_out1),
-      .b(b_input),
+      .b(b_input_mux_0.b_input),
       .alu_op(control_unit_0.alu_op)
   );
   assign alu_result_check = alu_0.result;
-
-  logic [31:0] memory_data;
 
   memory memory_0 (
       .address(alu_0.result),
@@ -540,14 +534,13 @@ module cpu (
       .write_enable(control_unit_0.memory_write),
       .clk(clk),
       .reset(reset),
-      .data_out(memory_data),
       .initial_values(initial_memory_values),
       .memory_check(memory_check)
   );
 
   register_data_in_mux register_data_in_mux_0 (
       .alu_result(alu_0.result),
-      .memory_data(memory_data),
+      .memory_data(memory_0.data_out),
       .pc_plus_4(pc_plus_4_0.pc_next),
       .register_data_in_mux_sel(control_unit_0.register_data_in_mux_sel)
   );
